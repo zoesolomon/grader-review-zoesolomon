@@ -11,6 +11,9 @@ mkdir grading-area
 
 git clone $1 student-submission
 echo 'Finished cloning'
+cp -r lib grading-area
+
+
 
 # Check that the student code has the correct file submitted. If they didn’t, 
 #detect and give helpful feedback about it. This is not done by the provided code, 
@@ -19,7 +22,7 @@ echo 'Finished cloning'
 
 file=$2
 
-if [ -f student-submission/"$file" ]; then
+if [ -f student-submission/"$file".java ]; then
     echo "Correct file submitted!"
 else
     echo "Incorrect file submitted. Please submit file titled $file"
@@ -31,7 +34,8 @@ fi
 # created for you, but you should move the files there.
 # Useful tools here might be cp (also look up the -r option to cp)
 
-cp -f student-submission/"$file" ./grading-area
+cp -f student-submission/"$file".java ./grading-area
+cd grading-area
 
 
 # Compile your tests and the student’s code from the appropriate directory with the
@@ -43,13 +47,19 @@ cp -f student-submission/"$file" ./grading-area
 
 set +e
 
-javac student-submission/"$file"
+# javac student-submission/"$file"
+
+javac -cp "$CPATH" "$file.java"
 
 if [ $? -eq 0 ]; then
-    echo "file works"
+    echo "file compiles!"
 else
     echo "complilation error"
-fi     
+fi 
+
+java -cp "$CPATH" org.junit.runner.JUnitCore "$file"
+
+    
 
 
 # Draw a picture/take notes on the directory structure that's set up after
